@@ -1,0 +1,60 @@
+---
+
+- hosts: all
+
+  become: true
+  become_method: sudo
+
+  tasks:
+
+  - name: atlassian apt key
+    apt_key: keyserver=keyserver.ubuntu.com id=B07804338C015B73 state=present
+
+  - name: install atlassian repo
+    apt_repository: repo='deb https://sdkrepo.atlassian.com/debian/ stable contrib' state=present
+    environment: proxy_env
+
+  - name: install java repo
+    apt_repository: repo='ppa:webupd8team/java' state=present
+    environment: proxy_env
+
+  - name: update
+    apt:
+      upgrade: yes
+    environment: proxy_env
+
+  - name: apt over https
+    apt:
+      name: apt-transport-https
+    environment: proxy_env
+
+  - name: preparing java install set licence selected
+    shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+
+  - name: preparing java install set licence seen
+    shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
+
+  - name: install java 8
+    apt:
+      name: oracle-java8-installer
+      state: present
+      install_recommends: yes
+      update_cache: yes
+      force: yes
+    environment: proxy_env
+
+  - name: install atlassian sdk
+    apt:
+      name: atlassian-plugin-sdk
+      update_cache: yes
+    environment: proxy_env
+
+  - name: Adding JAVA_HOME to path
+    lineinfile: dest=/etc/environment line='export JAVA_HOME=/usr/lib/jvm/java-8-oracle' insertafter='EOF' state=present
+
+  - shell: . /etc/environment && echo $JAVA_HOME
+    args:
+      executable: /bin/bash
+    register: java_home
+
+  - debug: var=java_home.stdout
