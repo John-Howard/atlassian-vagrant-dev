@@ -11,7 +11,7 @@ You have to have Vagrant and VirtualBox already installed on your computer.
 ### Creating the VM
 1. Git clone / or copy the files.
 2. ```sh vagrant up```
-3. Get a cup of coffe and wait.
+3. Get a cup of coffee and wait.
 
 ## Common Issues
 
@@ -20,4 +20,4 @@ You have to have Vagrant and VirtualBox already installed on your computer.
 It might happen that the atlassian sdk installatin fails when you're doing it over WiFi network. If your network slows down, some packages might be wrong and the TLS will not like.
 
 Solution: Try again when your internet connection get better.
-```sh vagrant up --provision``` 
+Run: ```sh vagrant up --provision``` when you think your connection is ok.
